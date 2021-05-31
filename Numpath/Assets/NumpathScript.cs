@@ -43,7 +43,7 @@ public class NumpathScript : MonoBehaviour {
 
     string[] colorNames = new string[] { "Red", "Green", "Blue", "Yellow", "Purple", "Orange" };
     string[] directionNames = new string[] { "up", "left", "down", "right" };
-    char[] letterNames = new char[] { 'U', 'L', 'D', 'R' };
+    string letterNames = "ULDR";
     int colorIndex;
     int stage = 0;
     int startNum;
@@ -56,16 +56,13 @@ public class NumpathScript : MonoBehaviour {
         foreach (KMSelectable button in buttons) 
         {
             button.OnInteract += delegate () { ButtonPress(button); return false; };
-        }
-        foreach (KMSelectable button in buttons)
-        {
-            button.OnInteractEnded += delegate () { Release(button); };
+            button.OnInteractEnded += delegate () { Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonRelease, button.transform); };
         }
     }
 
     void Start ()
     {
-        if (Colorblind.ColorblindModeActive) colorblindOn = true;
+        colorblindOn = Colorblind.ColorblindModeActive;
         GetNumbers();
         GetColors();
         GetStart();
@@ -102,10 +99,6 @@ public class NumpathScript : MonoBehaviour {
         }
     }
 
-    void Release(KMSelectable button)
-    {
-        Audio.PlayGameSoundAtTransform(KMSoundOverride.SoundEffect.ButtonRelease, button.transform);
-    }
 
     void GetNumbers()
     {
@@ -202,7 +195,7 @@ public class NumpathScript : MonoBehaviour {
             yield return null;
             foreach (char letter in parameters[1])
             {
-                buttons[Array.IndexOf(letterNames, letter)].OnInteract();
+                buttons[letterNames.IndexOf(letter)].OnInteract();
                 yield return new WaitForSecondsRealtime(0.1f);
             }
         }
